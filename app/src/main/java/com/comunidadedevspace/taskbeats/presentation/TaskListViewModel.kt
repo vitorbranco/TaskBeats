@@ -7,10 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.comunidadedevspace.taskbeats.TaskBeatsApplication
 import com.comunidadedevspace.taskbeats.data.Task
 import com.comunidadedevspace.taskbeats.data.TaskDao
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TaskListViewModel(private val taskDao: TaskDao): ViewModel() {
+class TaskListViewModel(
+    private val taskDao: TaskDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    ): ViewModel() {
 
     val taskListLiveData: LiveData<List<Task>> = taskDao.getAll()
 
@@ -24,25 +28,25 @@ class TaskListViewModel(private val taskDao: TaskDao): ViewModel() {
     }
 
     private fun insertIntoDatabase(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             taskDao.insert(task)
         }
     }
 
     private fun updateIntoDatabase(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             taskDao.update(task)
         }
     }
 
     private fun deleteById(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             taskDao.deleteById(id)
 
         }
     }
     private fun deleteAll() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             taskDao.deleteAll()
         }
     }
@@ -54,6 +58,4 @@ class TaskListViewModel(private val taskDao: TaskDao): ViewModel() {
             return TaskListViewModel(dao)
         }
     }
-
-
 }

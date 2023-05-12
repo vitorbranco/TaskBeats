@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     private fun listFromDatabase() {
         // Observer
         val listObserver = Observer<List<Task>> { listTasks ->
-            if(listTasks.isEmpty()) {
+            if (listTasks.isEmpty()) {
                 ctnContent.visibility = View.VISIBLE
             } else {
                 ctnContent.visibility = View.GONE
