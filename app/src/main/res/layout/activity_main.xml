@@ -6,19 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".presentation.MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_task_list" />
+
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        app:fabCradleVerticalOffset="10dp"
-        app:fabCradleMargin="8dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        app:fabCradleMargin="8dp"
+        app:fabCradleVerticalOffset="10dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:elevation="0dp"
             android:background="@android:color/transparent"
+            app:elevation="0dp"
             app:menu="@menu/menu_main" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
