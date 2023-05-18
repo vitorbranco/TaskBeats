@@ -1,6 +1,5 @@
 package com.comunidadedevspace.taskbeats.presentation
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.activity.viewModels
 import com.comunidadedevspace.taskbeats.R
 import com.comunidadedevspace.taskbeats.data.Task
 import com.google.android.material.snackbar.Snackbar
@@ -20,10 +20,16 @@ class TaskDetailActivity : AppCompatActivity() {
     private var task: Task? = null
     private lateinit var btnDone: Button
 
-    companion object{
+    private val viewModel: TaskDetailViewModel by viewModels {
+        TaskDetailViewModel.getVMFactory(
+            application
+        )
+    }
+
+    companion object {
         private const val TASK_DETAIL_EXTRA = "task.extra.detail"
 
-        fun start(context: Context, task: Task?): Intent{
+        fun start(context: Context, task: Task?): Intent {
             val intent = Intent(context, TaskDetailActivity::class.java)
                 .apply {
                     putExtra(TASK_DETAIL_EXTRA, task)
@@ -31,7 +37,6 @@ class TaskDetailActivity : AppCompatActivity() {
 
             return intent
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +50,7 @@ class TaskDetailActivity : AppCompatActivity() {
         val edtDescription = findViewById<EditText>(R.id.edt_task_description)
         btnDone = findViewById(R.id.btn_done)
 
-        if(task != null){
+        if (task != null) {
             edtTitle.setText(task!!.title)
             edtDescription.setText(task!!.description)
         }
@@ -54,30 +59,30 @@ class TaskDetailActivity : AppCompatActivity() {
             val title = edtTitle.text.toString()
             val description = edtDescription.text.toString()
 
-            if(title.isNotEmpty() && description.isNotEmpty()){
-                if(task == null){
+            if (title.isNotEmpty() && description.isNotEmpty()) {
+                if (task == null) {
                     addOrUpdateTask(0, title, description, ActionType.CREATE)
-                }
-                else {
+                } else {
                     addOrUpdateTask(task!!.id, title, description, ActionType.UPDATE)
                 }
             } else {
                 showMessage(it, "Campos obrigatórios não preenchidos")
             }
         }
-
-        // tvTitle = findViewById(R.id.tv_task_title_detail)
-
-        // tvTitle.text = task?.title ?: "Adiciona uma tarefa"
     }
 
-    private fun addOrUpdateTask(id: Int, title: String, description: String, actionType: ActionType) {
+    private fun addOrUpdateTask(
+        id: Int,
+        title: String,
+        description: String,
+        actionType: ActionType
+    ) {
         val task = Task(id, title, description)
-        returnAction(task, actionType)
+        performAction(task, actionType)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater : MenuInflater = menuInflater
+        val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu_task_detail, menu)
         return true
     }
@@ -85,32 +90,24 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_task -> {
-
-                if(task != null) {
-                    returnAction(task!!, ActionType.DELETE)
+                if (task != null) {
+                    performAction(task!!, ActionType.DELETE)
                 } else {
                     showMessage(btnDone, "Item não encontrado")
                 }
-
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
-
     }
 
-    private fun returnAction(task: Task, actionType: ActionType) {
-        val intent = Intent()
-            .apply {
-                val taskAction = TaskAction(task, actionType.name)
-                putExtra(TASK_ACTION_RESULT,taskAction)
-            }
-        setResult(Activity.RESULT_OK, intent)
+    private fun performAction(task: Task, actionType: ActionType) {
+        val taskAction = TaskAction(task, actionType.name)
+        viewModel.execute(taskAction)
         finish()
     }
 
-    private fun showMessage(view: View, message: String){
+    private fun showMessage(view: View, message: String) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG)
             .setAction("Action", null)
             .show()
