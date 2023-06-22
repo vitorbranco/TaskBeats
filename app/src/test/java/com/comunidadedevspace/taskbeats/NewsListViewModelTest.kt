@@ -29,7 +29,7 @@ class NewsListViewModelTest {
 
             val expectedTop = listOf(
                 NewsDto(
-                    id = 123456,
+                    id = "id1",
                     title = "title1",
                     imageUrl = "image1",
                     content = "summary1"
@@ -38,7 +38,7 @@ class NewsListViewModelTest {
 
             val expectedAll = listOf(
                 NewsDto(
-                    id = 654321,
+                    id = "id2",
                     title = "title2",
                     imageUrl = "image2",
                     content = "summary2"

@@ -8,7 +8,7 @@ data class NewsResponse(
 
 data class NewsDto(
     @SerializedName("uuid")
-    val id: Int,
+    val id: String,
     @SerializedName("snippet")
     val content: String,
     val title: String,
