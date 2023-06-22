@@ -27,25 +27,35 @@ class NewsListViewModelTest {
     fun `GIVEN request succeed WHEN fetch THEN return list`() {
         runBlocking {
 
-            val expected = listOf(
+            val expectedTop = listOf(
                 NewsDto(
                     id = 123456,
                     title = "title1",
                     imageUrl = "image1",
-                    summary = "summary1"
+                    content = "summary1"
                 )
             )
 
-            val response =
-                NewsResponse(results = expected, count = 654321, next = "next1", previous = false)
+            val expectedAll = listOf(
+                NewsDto(
+                    id = 654321,
+                    title = "title2",
+                    imageUrl = "image2",
+                    content = "summary2"
+                )
+            )
 
-            whenever(service.fetchNews()).thenReturn(response)
+            val topResponse = NewsResponse(data = expectedTop)
+            val allResponse = NewsResponse(data = expectedAll)
+
+            whenever(service.fetchTopNews()).thenReturn(topResponse)
+            whenever(service.fetchAllNews()).thenReturn(allResponse)
 
             underTest = NewsListViewModel(service)
 
             val result = underTest.newsListLiveData.getOrAwaitValue()
 
-            assert(result == expected)
+            assert(result == expectedTop + expectedAll)
 
         }
     }
